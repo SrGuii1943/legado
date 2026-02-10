@@ -21,10 +21,9 @@
             color: #f8fafc;
             font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
-            cursor: none; /* Esconde o cursor padrão */
+            cursor: none;
         }
 
-        /* Cursor Customizado Melhorado */
         #custom-cursor {
             position: fixed;
             width: 8px;
@@ -47,7 +46,6 @@
             pointer-events: none;
         }
 
-        /* Efeito de Corte Katana Surreal */
         #katana-flash {
             position: fixed;
             inset: 0;
@@ -82,7 +80,6 @@
             border-bottom: 1px solid rgba(212, 175, 55, 0.05);
         }
 
-        /* Glassmorphism com Reflexo de Luz Físico */
         .glass {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(20px);
@@ -93,7 +90,6 @@
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
         }
 
-        /* O brilho metálico que segue o rato */
         .glass::before {
             content: '';
             position: absolute;
@@ -108,10 +104,7 @@
             z-index: 1;
         }
 
-        .glass:hover::before {
-            opacity: 1;
-        }
-
+        .glass:hover::before { opacity: 1; }
         .glass:hover {
             transform: translateY(-12px) scale(1.03) rotateX(2deg);
             border-color: rgba(212, 175, 55, 0.4);
@@ -148,7 +141,6 @@
             transform: translateY(40px);
         }
         
-        /* Ajuste de links de navegação */
         .nav-link {
             position: relative;
             padding: 5px 0;
@@ -164,8 +156,32 @@
             transition: all 0.4s ease;
             transform: translateX(-50%);
         }
-        .nav-link:hover::after {
+        .nav-link:hover::after { width: 100%; }
+
+        .avatar-container {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 15px var(--gold);
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+        
+        .avatar-logo {
             width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Usando a imagem enviada como fallback ou direto no src */
+        }
+
+        .group:hover .avatar-container {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 25px var(--gold), 0 0 40px var(--crimson);
         }
     </style>
 </head>
@@ -200,13 +216,19 @@
 
     <div class="content-layer">
         
-        <header class="fixed top-0 w-full z-50 py-8 px-16 flex justify-between items-center transition-all duration-500">
+        <header class="fixed top-0 w-full z-50 py-6 px-16 flex justify-between items-center transition-all duration-500">
             <div class="flex items-center gap-5 group cursor-pointer" onclick="gsap.to(window, {duration: 1.5, scrollTo: 0, ease: 'power4.inOut'})">
                 <div class="relative">
-                    <i class="fa-solid fa-crown text-amber-500 text-2xl group-hover:rotate-12 transition-transform duration-500"></i>
+                    <div class="avatar-container">
+                        <!-- Imagem do Habblet configurada conforme sua solicitação -->
+                        <img src="https://imaging.habblet.city/avatarimage?figure=hd-11757-97556.hr-3163-97556.lg-990000859-107556.ea-10342-1326-1408.ch-3203-91.ha-99999999-107556-107570.cc-9913-110.cp-11711-68.fa-11666-74.he-10417-68-1320.wa-10253-107556-89&direction=2&head_direction=3&size=l&gesture=sml&action=wav&&img_format=png" alt="Sr Gui Avatar" class="avatar-logo">
+                    </div>
                     <div class="absolute -inset-2 bg-amber-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <span class="text-2xl font-bold font-serif tracking-[0.4em] gold-text uppercase">1943</span>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold font-serif tracking-[0.3em] gold-text uppercase leading-none">Sr Guii</span>
+                    <span class="text-[8px] text-white/40 tracking-[0.5em] uppercase mt-1">Legado 1943</span>
+                </div>
             </div>
             <nav class="hidden lg:flex gap-16 text-[10px] uppercase tracking-[0.6em] font-bold text-white/40">
                 <a href="#portal" class="nav-link hover:text-white transition-all">Portal</a>
@@ -264,7 +286,7 @@
         </section>
 
         <section id="conquistas" class="py-32 px-8 max-w-7xl mx-auto grid md:grid-cols-3 gap-10">
-            <div onclick="playClanVideo('v1.mp4')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
+            <div onclick="playClanVideo('sitesrgui/assets/videos/viedo1')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
                 <div class="mb-10 w-16 h-16 border border-amber-500/20 flex items-center justify-center rounded-full group-hover:bg-amber-500/10 transition-colors">
                     <i class="fa-solid fa-khanda text-2xl text-amber-500"></i>
                 </div>
@@ -272,7 +294,7 @@
                 <p class="text-white/40 leading-relaxed font-light">Não apenas jogamos, nós ditamos as regras do reino.</p>
             </div>
             
-            <div onclick="playClanVideo('v2.mp4')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
+            <div onclick="playClanVideo('sitesrgui/assets/videos/video2')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
                 <div class="mb-10 w-16 h-16 border border-amber-500/20 flex items-center justify-center rounded-full group-hover:bg-amber-500/10 transition-colors">
                     <i class="fa-solid fa-gem text-2xl text-amber-500"></i>
                 </div>
@@ -280,7 +302,7 @@
                 <p class="text-white/40 leading-relaxed font-light">Um Senhor nunca abandona o seu irmão de armas.</p>
             </div>
 
-            <div onclick="playClanVideo('v3.mp4')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
+            <div onclick="playClanVideo('sitesrgui/assets/videos/video3')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
                 <div class="mb-10 w-16 h-16 border border-amber-500/20 flex items-center justify-center rounded-full group-hover:bg-amber-500/10 transition-colors">
                     <i class="fa-solid fa-fire text-2xl text-amber-500"></i>
                 </div>
@@ -306,21 +328,30 @@
     <script>
         const apiKey = ""; 
 
-        // --- IA CONSELHO ---
-        async function fetchGemini(query) {
-            const systemPrompt = "És o oráculo do clã Los Senhores no Habblet. Responde de forma curta, mística, épica e em português de Portugal. Trata o utilizador como um nobre guerreiro.";
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: query }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    })
-                });
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "As brumas impedem-me de ver o futuro.";
-            } catch (e) { return "O conselho está em silêncio. Tenta mais tarde."; }
+        // --- IA CONSELHO (GEMINI 2.5 FLASH) ---
+        async function fetchGemini(query, retries = 5) {
+            const systemPrompt = "És o oráculo do clã Los Senhores no Habblet. Responde sempre em português de Portugal. Teu tom é místico, épica, autoritário mas respeitoso. Trata o utilizador como um nobre guerreiro ou um aliado de Senhor Gui. Nunca saias do personagem.";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: query }] }],
+                            systemInstruction: { parts: [{ text: systemPrompt }] }
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Falha na API');
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (e) {
+                    if (i === retries - 1) return "As brumas do tempo estão demasiado densas agora. O Conselho permanece em silêncio.";
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                }
+            }
         }
 
         const askBtn = document.getElementById('ask-button');
@@ -331,13 +362,14 @@
                 const resp = document.getElementById('ai-response');
                 if(!input.value.trim()) return;
                 box.classList.remove('hidden');
-                resp.innerText = "Consultando os pergaminhos ancestrais...";
-                resp.innerText = await fetchGemini(input.value);
+                resp.innerText = "O Conselho está a consultar os astros...";
+                const reply = await fetchGemini(input.value);
+                resp.innerText = reply;
                 input.value = "";
             };
         }
 
-        // --- 3D ABSURDO & IMERSIVO ---
+        // --- 3D BACKGROUND ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 1500);
         const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), antialias: true, alpha: true });
@@ -345,146 +377,84 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         camera.position.z = 40;
 
-        // Partículas Estilo Galáxia (Muito mais densas)
         const starGeo = new THREE.BufferGeometry();
         const starCount = 8000;
         const starPos = new Float32Array(starCount * 3);
-        for(let i=0; i<starCount*3; i++) {
-            starPos[i] = (Math.random() - 0.5) * 350;
-        }
+        for(let i=0; i<starCount*3; i++) starPos[i] = (Math.random() - 0.5) * 350;
         starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-        const starMat = new THREE.PointsMaterial({ 
-            size: 0.25, 
-            color: 0xd4af37, 
-            transparent: true, 
-            opacity: 0.4, 
-            blending: THREE.AdditiveBlending 
-        });
+        const starMat = new THREE.PointsMaterial({ size: 0.25, color: 0xd4af37, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending });
         const stars = new THREE.Points(starGeo, starMat);
         scene.add(stars);
 
-        // Selo Central Reativo 3D
         const sealGroup = new THREE.Group();
-        const mainRing = new THREE.Mesh(
-            new THREE.TorusGeometry(12, 0.04, 16, 100), 
-            new THREE.MeshBasicMaterial({ color: 0x991b1b, transparent: true, opacity: 0.3 })
-        );
-        sealGroup.add(mainRing);
-
-        const innerRing = new THREE.Mesh(
-            new THREE.TorusGeometry(8, 0.02, 16, 100), 
-            new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.5 })
-        );
+        const mainRing = new THREE.Mesh(new THREE.TorusGeometry(12, 0.04, 16, 100), new THREE.MeshBasicMaterial({ color: 0x991b1b, transparent: true, opacity: 0.3 }));
+        const innerRing = new THREE.Mesh(new THREE.TorusGeometry(8, 0.02, 16, 100), new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.5 }));
         innerRing.rotation.x = Math.PI / 2;
-        sealGroup.add(innerRing);
+        sealGroup.add(mainRing, innerRing);
         scene.add(sealGroup);
 
         let mX = 0, mY = 0;
         window.onmousemove = (e) => {
             mX = (e.clientX / window.innerWidth) - 0.5;
             mY = (e.clientY / window.innerHeight) - 0.5;
-            
-            // Cursor suave
-            gsap.to("#custom-cursor", { 
-                left: e.clientX, 
-                top: e.clientY, 
-                duration: 0.1,
-                ease: "power2.out"
-            });
+            gsap.to("#custom-cursor", { left: e.clientX, top: e.clientY, duration: 0.1, ease: "power2.out" });
         };
 
         function animate() {
             requestAnimationFrame(animate);
             stars.rotation.y += 0.0004;
-            stars.rotation.x += 0.0001;
-            
-            // Movimento de Parallax Imersivo
             stars.position.x += (mX * 5 - stars.position.x) * 0.05;
             stars.position.y += (-mY * 5 - stars.position.y) * 0.05;
-            
             sealGroup.rotation.y += 0.003 + (mX * 0.15);
             sealGroup.rotation.x += (mY * 0.15);
-            
             renderer.render(scene, camera);
         }
 
-        // --- TRANSIÇÃO KATANA MELHORADA (SEM BUGS) ---
         function katanaTransition(targetId) {
             const flash = document.getElementById('katana-flash');
             const line = document.getElementById('katana-line');
             const target = document.querySelector(targetId);
-            
             if(!target) return;
-
             line.style.display = 'block';
-            const tl = gsap.timeline();
-            
-            tl.set(line, { left: '-150%', opacity: 1 })
-              .to(line, { left: '150%', duration: 0.45, ease: "power4.inOut" })
-              .to(flash, { opacity: 1, duration: 0.1 }, "-=0.25")
-              .add(() => {
-                  window.scrollTo({
-                      top: target.offsetTop - 80,
-                      behavior: 'auto'
-                  });
-              })
-              .to(flash, { opacity: 0, duration: 0.8, ease: "power2.out" })
-              .set(line, { display: 'none' });
+            gsap.timeline()
+                .set(line, { left: '-150%', opacity: 1 })
+                .to(line, { left: '150%', duration: 0.45, ease: "power4.inOut" })
+                .to(flash, { opacity: 1, duration: 0.1 }, "-=0.25")
+                .add(() => window.scrollTo({ top: target.offsetTop - 80, behavior: 'auto' }))
+                .to(flash, { opacity: 0, duration: 0.8, ease: "power2.out" })
+                .set(line, { display: 'none' });
         }
 
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.onclick = (e) => {
-                e.preventDefault();
-                katanaTransition(link.getAttribute('href'));
-            };
+            link.onclick = (e) => { e.preventDefault(); katanaTransition(link.getAttribute('href')); };
         });
 
-        // --- CORREÇÃO DO REFLEXO NOS CARDS ---
         window.updateMousePos = (e, el) => {
             const rect = el.getBoundingClientRect();
-            // Calcula a posição relativa ao card em percentagem
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            el.style.setProperty('--m-x', `${x}%`);
-            el.style.setProperty('--m-y', `${y}%`);
+            el.style.setProperty('--m-x', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+            el.style.setProperty('--m-y', `${((e.clientY - rect.top) / rect.height) * 100}%`);
         };
 
-        // --- INICIALIZAÇÃO ---
         window.onload = () => {
-            gsap.to("#loader", { 
-                opacity: 0, 
-                duration: 1.2, 
-                delay: 0.8, 
-                onComplete: () => {
-                    document.getElementById('loader').style.display = 'none';
-                    animate();
-                    gsap.to(".hero-reveal", { 
-                        opacity: 1, 
-                        y: 0, 
-                        duration: 1.5, 
-                        stagger: 0.3, 
-                        ease: "expo.out" 
-                    });
-                }
-            });
+            gsap.to("#loader", { opacity: 0, duration: 1.2, delay: 0.8, onComplete: () => {
+                document.getElementById('loader').style.display = 'none';
+                animate();
+                gsap.to(".hero-reveal", { opacity: 1, y: 0, duration: 1.5, stagger: 0.3, ease: "expo.out" });
+            }});
         };
 
-        window.playClanVideo = (v) => {
+        window.playClanVideo = (path) => {
             const m = document.getElementById('video-modal');
             const p = document.getElementById('clan-video-player');
-            if(m && p) {
-                m.classList.add('active');
-                p.play().catch(() => console.log("Vídeo precisa de interação"));
-            }
+            p.src = path;
+            p.load(); 
+            m.classList.add('active');
+            p.play().catch(e => console.log("Aguardando interação para reproduzir vídeo..."));
         };
 
         window.closeVideo = () => {
-            const m = document.getElementById('video-modal');
-            const p = document.getElementById('clan-video-player');
-            if(m && p) {
-                m.classList.remove('active');
-                p.pause();
-            }
+            document.getElementById('video-modal').classList.remove('active');
+            document.getElementById('clan-video-player').pause();
         };
 
         window.onresize = () => {
