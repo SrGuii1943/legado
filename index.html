@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Los Senhores | Portal do Clã</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --crimson: #991b1b;
+            --gold: #d4af37;
+            --dark-bg: #020202;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--dark-bg);
+            color: #f8fafc;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            cursor: none; /* Esconde o cursor padrão */
+        }
+
+        /* Cursor Customizado Melhorado */
+        #custom-cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            box-shadow: 0 0 15px var(--gold), 0 0 30px var(--crimson);
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Efeito de Corte Katana Surreal */
+        #katana-flash {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #katana-line {
+            position: fixed;
+            top: 50%;
+            left: -150%;
+            width: 400%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #fff, var(--gold), #fff, transparent);
+            box-shadow: 0 0 40px #fff, 0 0 80px var(--gold);
+            z-index: 10000;
+            transform: translateY(-50%) rotate(-20deg);
+            pointer-events: none;
+            display: none;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            background: rgba(2, 2, 2, 0.2);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+        }
+
+        /* Glassmorphism com Reflexo de Luz Físico */
+        .glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+        }
+
+        /* O brilho metálico que segue o rato */
+        .glass::before {
+            content: '';
+            position: absolute;
+            inset: -50%;
+            background: radial-gradient(circle at var(--m-x, 50%) var(--m-y, 50%), 
+                        rgba(255, 255, 255, 0.12) 0%, 
+                        rgba(212, 175, 55, 0.05) 25%,
+                        transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .glass:hover::before {
+            opacity: 1;
+        }
+
+        .glass:hover {
+            transform: translateY(-12px) scale(1.03) rotateX(2deg);
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 20px rgba(153, 27, 27, 0.1);
+        }
+
+        .gold-text {
+            background: linear-gradient(to bottom, #fff 0%, var(--gold) 50%, #886a10 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        .crimson-glow {
+            text-shadow: 0 0 40px rgba(153, 27, 27, 0.7), 0 0 80px rgba(153, 27, 27, 0.3);
+        }
+
+        ::-webkit-scrollbar { width: 0px; }
+
+        #video-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.98);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(40px);
+        }
+        #video-modal.active { display: flex; }
+
+        .hero-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        
+        /* Ajuste de links de navegação */
+        .nav-link {
+            position: relative;
+            padding: 5px 0;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: all 0.4s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="custom-cursor"></div>
+    <div id="katana-flash"></div>
+    <div id="katana-line"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div id="loader" class="fixed inset-0 bg-[#020202] z-[9999] flex flex-col items-center justify-center">
+        <div class="relative w-40 h-40 mb-8 flex items-center justify-center">
+            <div class="absolute inset-0 border-[1px] border-amber-500/20 rounded-full scale-125"></div>
+            <div class="absolute inset-0 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+            <i class="fa-solid fa-dragon text-amber-500 text-5xl animate-pulse"></i>
+        </div>
+        <p class="text-amber-500 tracking-[1.5em] text-[10px] uppercase font-bold ml-6">Despertando o Poder...</p>
+    </div>
+
+    <div id="video-modal" onclick="closeVideo()">
+        <div class="relative w-full max-w-5xl p-6" onclick="event.stopPropagation()">
+            <button onclick="closeVideo()" class="absolute -top-12 right-6 text-white text-3xl hover:text-red-600 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="glass p-1 border-amber-500/30">
+                <video id="clan-video-player" controls class="w-full rounded-xl shadow-2xl">
+                    Seu navegador não suporta vídeos.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-layer">
+        
+        <header class="fixed top-0 w-full z-50 py-8 px-16 flex justify-between items-center transition-all duration-500">
+            <div class="flex items-center gap-5 group cursor-pointer" onclick="gsap.to(window, {duration: 1.5, scrollTo: 0, ease: 'power4.inOut'})">
+                <div class="relative">
+                    <i class="fa-solid fa-crown text-amber-500 text-2xl group-hover:rotate-12 transition-transform duration-500"></i>
+                    <div class="absolute -inset-2 bg-amber-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <span class="text-2xl font-bold font-serif tracking-[0.4em] gold-text uppercase">1943</span>
+            </div>
+            <nav class="hidden lg:flex gap-16 text-[10px] uppercase tracking-[0.6em] font-bold text-white/40">
+                <a href="#portal" class="nav-link hover:text-white transition-all">Portal</a>
+                <a href="#conselho" class="nav-link hover:text-white transition-all">Conselho</a>
+                <a href="#conquistas" class="nav-link hover:text-white transition-all">Conquistas</a>
+            </nav>
+            <div class="flex items-center gap-10">
+                <div class="hidden sm:block text-right">
+                    <p class="text-[8px] tracking-widest text-amber-500 uppercase font-black">Status do Clã</p>
+                    <p class="text-[10px] text-red-600 font-bold">SOBERANIA ATIVA</p>
+                </div>
+                <button id="toggle-audio" class="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center hover:border-amber-500/50 transition-all text-amber-500 bg-black/20">
+                    <i class="fa-solid fa-volume-high text-xs"></i>
+                </button>
+            </div>
+        </header>
+
+        <section id="portal" class="min-h-screen flex items-center justify-center relative">
+            <div class="text-center px-6">
+                <div class="hero-reveal mb-12">
+                    <span class="px-6 py-2 border border-red-900/40 text-red-500 tracking-[1em] text-[9px] uppercase font-bold bg-red-950/10">Habblet Elite Clan</span>
+                </div>
+                <h1 class="text-8xl md:text-[160px] font-serif font-bold leading-[0.85] mb-12 hero-reveal crimson-glow tracking-tighter">
+                    SR <br> <span class="italic gold-text drop-shadow-2xl">GUII 1943</span>
+                </h1>
+                <p class="max-w-2xl mx-auto text-white/50 text-xl md:text-2xl mb-16 hero-reveal font-light tracking-[0.2em] leading-relaxed">
+                    A irmandade onde o aço encontra a honra.
+                </p>
+                <div class="hero-reveal">
+                    <a href="https://chat.whatsapp.com/GNIasuibscE5kxez4K8RPY" target="_blank" class="group relative inline-block px-16 py-6 border border-amber-500/30 overflow-hidden">
+                        <div class="absolute inset-0 bg-amber-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                        <span class="relative text-amber-500 font-black tracking-[0.5em] text-xs uppercase">Juntar-se ao meu legado </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="conselho" class="min-h-screen flex items-center justify-center py-32">
+            <div class="max-w-5xl w-full px-8">
+                <div class="glass p-16 md:p-24 relative" onmousemove="updateMousePos(event, this)">
+                    <div class="relative z-10 text-center">
+                        <i class="fa-solid fa-scroll text-amber-500/40 text-5xl mb-10"></i>
+                        <h3 class="text-5xl md:text-6xl font-serif mb-12 gold-text uppercase tracking-widest">O Conselho de Senhor Gui</h3>
+                        <div class="flex flex-col md:flex-row gap-6 mb-12">
+                            <input type="text" id="ai-input" placeholder="O que desejas saber, nobre?" 
+                                   class="flex-1 bg-white/5 border-b border-white/10 px-8 py-6 outline-none focus:border-amber-500/60 transition-all text-white text-xl font-light italic">
+                            <button id="ask-button" class="bg-red-900/20 hover:bg-red-800/40 border border-red-700/50 text-red-500 font-bold px-12 py-6 transition-all uppercase text-xs tracking-[0.3em]">Consultar</button>
+                        </div>
+                        <div id="response-box" class="hidden text-left bg-black/60 p-12 border border-white/5 rounded-2xl backdrop-blur-md">
+                            <p id="ai-response" class="text-white/90 text-xl leading-relaxed font-serif"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="conquistas" class="py-32 px-8 max-w-7xl mx-auto grid md:grid-cols-3 gap-10">
+            <div onclick="playClanVideo('v1.mp4')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
+                <div class="mb-10 w-16 h-16 border border-amber-500/20 flex items-center justify-center rounded-full group-hover:bg-amber-500/10 transition-colors">
+                    <i class="fa-solid fa-khanda text-2xl text-amber-500"></i>
+                </div>
+                <h4 class="text-3xl font-serif mb-6 gold-text uppercase tracking-widest">Supremacia</h4>
+                <p class="text-white/40 leading-relaxed font-light">Não apenas jogamos, nós ditamos as regras do reino.</p>
+            </div>
+            
+            <div onclick="playClanVideo('v2.mp4')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
+                <div class="mb-10 w-16 h-16 border border-amber-500/20 flex items-center justify-center rounded-full group-hover:bg-amber-500/10 transition-colors">
+                    <i class="fa-solid fa-gem text-2xl text-amber-500"></i>
+                </div>
+                <h4 class="text-3xl font-serif mb-6 gold-text uppercase tracking-widest">Honra</h4>
+                <p class="text-white/40 leading-relaxed font-light">Um Senhor nunca abandona o seu irmão de armas.</p>
+            </div>
+
+            <div onclick="playClanVideo('v3.mp4')" onmousemove="updateMousePos(event, this)" class="glass p-16 cursor-pointer group">
+                <div class="mb-10 w-16 h-16 border border-amber-500/20 flex items-center justify-center rounded-full group-hover:bg-amber-500/10 transition-colors">
+                    <i class="fa-solid fa-fire text-2xl text-amber-500"></i>
+                </div>
+                <h4 class="text-3xl font-serif mb-6 gold-text uppercase tracking-widest">Legado</h4>
+                <p class="text-white/40 leading-relaxed font-light">Escrito com sangue e ouro nas páginas do tempo.</p>
+            </div>
+        </section>
+
+        <footer class="py-32 text-center border-t border-white/5 bg-black/40">
+            <div class="mb-12 opacity-10 flex justify-center gap-10 text-4xl">
+                <i class="fa-solid fa-chess-king"></i>
+                <i class="fa-solid fa-dragon"></i>
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <p class="text-[11px] tracking-[1.5em] text-white/30 uppercase font-black">Los Senhores • O Império Habblet</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+    <script>
+        const apiKey = ""; 
+
+        // --- IA CONSELHO ---
+        async function fetchGemini(query) {
+            const systemPrompt = "És o oráculo do clã Los Senhores no Habblet. Responde de forma curta, mística, épica e em português de Portugal. Trata o utilizador como um nobre guerreiro.";
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: query }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "As brumas impedem-me de ver o futuro.";
+            } catch (e) { return "O conselho está em silêncio. Tenta mais tarde."; }
+        }
+
+        const askBtn = document.getElementById('ask-button');
+        if(askBtn) {
+            askBtn.onclick = async () => {
+                const input = document.getElementById('ai-input');
+                const box = document.getElementById('response-box');
+                const resp = document.getElementById('ai-response');
+                if(!input.value.trim()) return;
+                box.classList.remove('hidden');
+                resp.innerText = "Consultando os pergaminhos ancestrais...";
+                resp.innerText = await fetchGemini(input.value);
+                input.value = "";
+            };
+        }
+
+        // --- 3D ABSURDO & IMERSIVO ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 1500);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 40;
+
+        // Partículas Estilo Galáxia (Muito mais densas)
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 8000;
+        const starPos = new Float32Array(starCount * 3);
+        for(let i=0; i<starCount*3; i++) {
+            starPos[i] = (Math.random() - 0.5) * 350;
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ 
+            size: 0.25, 
+            color: 0xd4af37, 
+            transparent: true, 
+            opacity: 0.4, 
+            blending: THREE.AdditiveBlending 
+        });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
+
+        // Selo Central Reativo 3D
+        const sealGroup = new THREE.Group();
+        const mainRing = new THREE.Mesh(
+            new THREE.TorusGeometry(12, 0.04, 16, 100), 
+            new THREE.MeshBasicMaterial({ color: 0x991b1b, transparent: true, opacity: 0.3 })
+        );
+        sealGroup.add(mainRing);
+
+        const innerRing = new THREE.Mesh(
+            new THREE.TorusGeometry(8, 0.02, 16, 100), 
+            new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.5 })
+        );
+        innerRing.rotation.x = Math.PI / 2;
+        sealGroup.add(innerRing);
+        scene.add(sealGroup);
+
+        let mX = 0, mY = 0;
+        window.onmousemove = (e) => {
+            mX = (e.clientX / window.innerWidth) - 0.5;
+            mY = (e.clientY / window.innerHeight) - 0.5;
+            
+            // Cursor suave
+            gsap.to("#custom-cursor", { 
+                left: e.clientX, 
+                top: e.clientY, 
+                duration: 0.1,
+                ease: "power2.out"
+            });
+        };
+
+        function animate() {
+            requestAnimationFrame(animate);
+            stars.rotation.y += 0.0004;
+            stars.rotation.x += 0.0001;
+            
+            // Movimento de Parallax Imersivo
+            stars.position.x += (mX * 5 - stars.position.x) * 0.05;
+            stars.position.y += (-mY * 5 - stars.position.y) * 0.05;
+            
+            sealGroup.rotation.y += 0.003 + (mX * 0.15);
+            sealGroup.rotation.x += (mY * 0.15);
+            
+            renderer.render(scene, camera);
+        }
+
+        // --- TRANSIÇÃO KATANA MELHORADA (SEM BUGS) ---
+        function katanaTransition(targetId) {
+            const flash = document.getElementById('katana-flash');
+            const line = document.getElementById('katana-line');
+            const target = document.querySelector(targetId);
+            
+            if(!target) return;
+
+            line.style.display = 'block';
+            const tl = gsap.timeline();
+            
+            tl.set(line, { left: '-150%', opacity: 1 })
+              .to(line, { left: '150%', duration: 0.45, ease: "power4.inOut" })
+              .to(flash, { opacity: 1, duration: 0.1 }, "-=0.25")
+              .add(() => {
+                  window.scrollTo({
+                      top: target.offsetTop - 80,
+                      behavior: 'auto'
+                  });
+              })
+              .to(flash, { opacity: 0, duration: 0.8, ease: "power2.out" })
+              .set(line, { display: 'none' });
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.onclick = (e) => {
+                e.preventDefault();
+                katanaTransition(link.getAttribute('href'));
+            };
+        });
+
+        // --- CORREÇÃO DO REFLEXO NOS CARDS ---
+        window.updateMousePos = (e, el) => {
+            const rect = el.getBoundingClientRect();
+            // Calcula a posição relativa ao card em percentagem
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            el.style.setProperty('--m-x', `${x}%`);
+            el.style.setProperty('--m-y', `${y}%`);
+        };
+
+        // --- INICIALIZAÇÃO ---
+        window.onload = () => {
+            gsap.to("#loader", { 
+                opacity: 0, 
+                duration: 1.2, 
+                delay: 0.8, 
+                onComplete: () => {
+                    document.getElementById('loader').style.display = 'none';
+                    animate();
+                    gsap.to(".hero-reveal", { 
+                        opacity: 1, 
+                        y: 0, 
+                        duration: 1.5, 
+                        stagger: 0.3, 
+                        ease: "expo.out" 
+                    });
+                }
+            });
+        };
+
+        window.playClanVideo = (v) => {
+            const m = document.getElementById('video-modal');
+            const p = document.getElementById('clan-video-player');
+            if(m && p) {
+                m.classList.add('active');
+                p.play().catch(() => console.log("Vídeo precisa de interação"));
+            }
+        };
+
+        window.closeVideo = () => {
+            const m = document.getElementById('video-modal');
+            const p = document.getElementById('clan-video-player');
+            if(m && p) {
+                m.classList.remove('active');
+                p.pause();
+            }
+        };
+
+        window.onresize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+    </script>
+</body>
+</html>
